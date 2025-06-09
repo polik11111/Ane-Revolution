@@ -1,0 +1,2418 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Cen Produktów - Logowanie</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Style logowania */
+        .login-container {
+            max-width: 400px;
+            margin: 10vh auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .login-form {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Panel zmiany hasła */
+        .change-password-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .change-password-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .change-password-link a:hover {
+            text-decoration: underline;
+        }
+
+        .change-password-form {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Główna aplikacja - ukryta domyślnie */
+        .main-app {
+            display: none;
+        }
+
+        /* Logout button */
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            z-index: 1000;
+        }
+
+        /* Style dla głównej aplikacji - skopiowane z oryginalnego pliku */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-top: 60px;
+        }
+        
+        .header {
+            background: #000000;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .logo img {
+            width: 100px;
+            height: auto;
+        }
+        
+        .brand-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #e91e63, #f06292);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+        }
+        
+        .client-info-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .client-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .krs-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+        
+        .krs-input-group input {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .krs-btn {
+            padding: 12px 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-width: 80px;
+        }
+        
+        .krs-btn:hover {
+            background: #2980b9;
+        }
+        
+        .info-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .info-group input, .info-group select, .info-group textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .info-group input:focus, .info-group select:focus, .info-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .info-group textarea {
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 0;
+            min-height: 600px;
+        }
+        
+        .products-section {
+            padding: 30px;
+        }
+        
+        .product-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 20px;
+        }
+        
+        .product-tab {
+            padding: 12px 24px;
+            background: #ecf0f1;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .product-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .product-config {
+            display: none;
+        }
+        
+        .product-config.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .config-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .config-group h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        select, input[type="number"] {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .price-panel {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .price-summary {
+            flex-grow: 1;
+        }
+        
+        .price-summary h2 {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .price-breakdown {
+            margin-bottom: 25px;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .price-item:last-child {
+            border-bottom: none;
+        }
+        
+        .price-item span:first-child {
+            font-size: 14px;
+        }
+        
+        .price-item span:last-child {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .total-price {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .total-price .label {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .total-price .amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #f39c12;
+        }
+        
+        .quantity-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .quantity-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .quantity-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 16px;
+        }
+        
+        .quantity-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .quantity-input:focus {
+            outline: none;
+            border-color: #f39c12;
+        }
+        
+        .margin-section {
+            background: rgba(46, 204, 113, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .margin-section h3 {
+            color: #27ae60;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .margin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(46, 204, 113, 0.2);
+        }
+        
+        .margin-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .save-section {
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .save-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+        
+        .client-offer-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            width: 100%;
+        }
+        
+        .client-offer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .discount-section {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+        }
+        
+        .discount-section h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-tabs {
+                justify-content: center;
+            }
+            
+            .product-tab {
+                font-size: 12px;
+                padding: 10px 16px;
+            }
+            
+            .client-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .krs-input-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .krs-btn {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .user-info, .logout-btn {
+                position: relative;
+                margin: 10px auto;
+                display: block;
+                width: fit-content;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .client-info-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Panel logowania -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-header">
+            <h1>🔐 Logowanie</h1>
+            <p>Kalkulator Cen Produktów - ANE Revolution</p>
+        </div>
+        <div class="login-form">
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Nazwa użytkownika:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Hasło:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">🚀 Zaloguj się</button>
+            </form>
+
+            <div class="change-password-link">
+                <a href="#" onclick="toggleChangePassword()">🔑 Zmień hasło</a>
+            </div>
+
+            <!-- Formularz zmiany hasła -->
+            <div class="change-password-form" id="changePasswordForm">
+                <form id="changePasswordFormElement">
+                    <div class="form-group">
+                        <label for="currentPassword">Obecne hasło:</label>
+                        <input type="password" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Nowe hasło:</label>
+                        <input type="password" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Potwierdź nowe hasło:</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="login-btn">💾 Zmień hasło</button>
+                    <button type="button" class="login-btn" onclick="toggleChangePassword()" style="background: #95a5a6; margin-top: 10px;">❌ Anuluj</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informacje o użytkowniku i przycisk wylogowania (widoczne po zalogowaniu) -->
+    <div class="user-info" id="userInfo" style="display: none;">
+        👤 <span id="loggedUsername"></span>
+    </div>
+    <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display: none;">🚪 Wyloguj</button>
+
+    <!-- Główna aplikacja (ukryta domyślnie) -->
+    <div class="main-app" id="mainApp">
+        <div class="container">
+            <div class="header">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="https://anesport.pl/images/logos/logo_r.png" 
+                             alt="Ane Revolution Logo" 
+                             style="width: 100px; height: auto; max-height: 80px; object-fit: contain;">
+                    </div>
+                    <div class="brand-name">Ane Revolution</div>
+                </div>
+                <h1>🏆 Kalkulator Cen Produktów</h1>
+                <p>Profesjonalny system wyceny i zarządzania ofertami</p>
+            </div>
+            
+            <div class="client-info-section">
+                <h2 style="margin-bottom: 20px; color: #2c3e50;">📋 Informacje o kliencie i ofercie</h2>
+                <div class="client-info-grid">
+                    <div class="info-group">
+                        <label for="client-name">Nazwa klienta / Firma:</label>
+                        <input type="text" id="client-name" placeholder="Wpisz nazwę klienta">
+                    </div>
+                    <div class="info-group">
+                        <label for="client-krs">KRS klienta:</label>
+                        <div class="krs-input-group">
+                            <input type="text" id="client-krs" placeholder="0000123456">
+                            <button type="button" onclick="fetchCompanyData('krs')" class="krs-btn">
+                                🔍 Pobierz
+                            </button>
+                        </div>
+                        <div id="krs-status" style="margin-top: 5px; font-size: 12px; color: #666;"></div>
+                    </div>
+                    <div class="info-group">
+                        <label for="client-nip">NIP klienta:</label>
+                        <div class="krs-input-group">
+                            <input type="text" id="client-nip" placeholder="123-456-78-90">
+                            <button type="button" onclick="fetchCompanyData('nip')" class="krs-btn">
+                                🔍 Pobierz
+                            </button>
+                        </div>
+                        <div id="nip-status" style="margin-top: 5px; font-size: 12px; color: #666;"></div>
+                    </div>
+                    <div class="info-group">
+                        <label for="client-address">Adres firmy:</label>
+                        <textarea id="client-address" placeholder="Wpisz adres firmy" rows="2"></textarea>
+                    </div>
+                    <div class="info-group">
+                        <label for="offer-date">Data oferty:</label>
+                        <input type="date" id="offer-date">
+                    </div>
+                    <div class="info-group">
+                        <label for="offer-number">Numer oferty:</label>
+                        <input type="text" id="offer-number" placeholder="OF/2025/001" readonly>
+                    </div>
+                    <div class="info-group">
+                        <label for="client-contact">Osoba kontaktowa:</label>
+                        <input type="text" id="client-contact" placeholder="Imię i nazwisko">
+                    </div>
+                    <div class="info-group">
+                        <label for="client-email">Email klienta:</label>
+                        <input type="email" id="client-email" placeholder="klient@firma.pl">
+                    </div>
+                    <div class="info-group">
+                        <label for="client-phone">Telefon klienta:</label>
+                        <input type="tel" id="client-phone" placeholder="+48 123 456 789">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="products-section">
+                    <div class="product-tabs">
+                        <button class="product-tab active" data-product="puchar">🏆 Puchar</button>
+                        <button class="product-tab" data-product="statuetka">🎖️ Statuetka</button>
+                        <button class="product-tab" data-product="medal">🥇 Medal</button>
+                        <button class="product-tab" data-product="komin">🎗️ Komin</button>
+                        <button class="product-tab" data-product="koszulka">👕 Koszulka</button>
+                    </div>
+                    
+                    <!-- PUCHAR -->
+                    <div class="product-config active" id="puchar">
+                        <div class="config-group">
+                            <h3>Specyfikacja Pucharu</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Materiał korpusu:</label>
+                                    <select id="puchar-material">
+                                        <option value="plastik-15">Plastik (+15 zł)</option>
+                                        <option value="metal-35">Metal (+35 zł)</option>
+                                        <option value="szklo-55">Szkło (+55 zł)</option>
+                                        <option value="krysztal-85">Kryształ (+85 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Rozmiar:</label>
+                                    <select id="puchar-size">
+                                        <option value="maly-0">Mały (do 15cm) (+0 zł)</option>
+                                        <option value="sredni-20">Średni (15-25cm) (+20 zł)</option>
+                                        <option value="duzy-45">Duży (25-35cm) (+45 zł)</option>
+                                        <option value="bardzo-duzy-75">Bardzo duży (35cm+) (+75 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Typ uchwytu:</label>
+                                    <select id="puchar-handle">
+                                        <option value="standardowy-0">Standardowy (+0 zł)</option>
+                                        <option value="ozdobny-15">Ozdobny (+15 zł)</option>
+                                        <option value="bez-uchwytu-minus5">Bez uchwytu (-5 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Podstawa:</label>
+                                    <select id="puchar-base">
+                                        <option value="plastikowa-5">Plastikowa (+5 zł)</option>
+                                        <option value="drewniana-12">Drewniana (+12 zł)</option>
+                                        <option value="marmurowa-25">Marmurowa (+25 zł)</option>
+                                        <option value="metalowa-18">Metalowa (+18 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Grawer:</label>
+                                    <select id="puchar-engraving">
+                                        <option value="brak-0">Brak (+0 zł)</option>
+                                        <option value="laser-12">Laser (+12 zł)</option>
+                                        <option value="piaskowanie-18">Piaskowanie (+18 zł)</option>
+                                        <option value="nadruk-8">Nadruk (+8 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Wykończenie:</label>
+                                    <select id="puchar-finish">
+                                        <option value="standardowe-0">Standardowe (+0 zł)</option>
+                                        <option value="chromowane-15">Chromowane (+15 zł)</option>
+                                        <option value="zlocone-25">Złocone (+25 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- STATUETKA -->
+                    <div class="product-config" id="statuetka">
+                        <div class="config-group">
+                            <h3>Specyfikacja Statuetki</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Materiał:</label>
+                                    <select id="statuetka-material">
+                                        <option value="zywica-20">Żywica (+20 zł)</option>
+                                        <option value="metal-45">Metal (+45 zł)</option>
+                                        <option value="szklo-65">Szkło (+65 zł)</option>
+                                        <option value="krysztal-95">Kryształ (+95 zł)</option>
+                                        <option value="drewno-35">Drewno (+35 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Rozmiar:</label>
+                                    <select id="statuetka-size">
+                                        <option value="mini-0">Mini (do 10cm) (+0 zł)</option>
+                                        <option value="mala-15">Mała (10-15cm) (+15 zł)</option>
+                                        <option value="srednia-35">Średnia (15-25cm) (+35 zł)</option>
+                                        <option value="duza-65">Duża (25cm+) (+65 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Podstawa:</label>
+                                    <select id="statuetka-base">
+                                        <option value="bez-podstawy-0">Bez podstawy (+0 zł)</option>
+                                        <option value="drewniana-15">Drewniana (+15 zł)</option>
+                                        <option value="marmurowa-35">Marmurowa (+35 zł)</option>
+                                        <option value="metalowa-25">Metalowa (+25 zł)</option>
+                                        <option value="akrylowa-18">Akrylowa (+18 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Typ figurki:</label>
+                                    <select id="statuetka-type">
+                                        <option value="standardowa-0">Standardowa (+0 zł)</option>
+                                        <option value="personalizowana-45">Personalizowana (+45 zł)</option>
+                                        <option value="sportowa-25">Sportowa (+25 zł)</option>
+                                        <option value="biznesowa-30">Biznesowa (+30 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Wykończenie:</label>
+                                    <select id="statuetka-finish">
+                                        <option value="matowe-0">Matowe (+0 zł)</option>
+                                        <option value="błyszczace-10">Błyszczące (+10 zł)</option>
+                                        <option value="kolorowe-20">Kolorowe (+20 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="statuetka-base-engraving">
+                                        <label for="statuetka-base-engraving">Grawer na podstawie (+12 zł)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- MEDAL -->
+                    <div class="product-config" id="medal">
+                        <div class="config-group">
+                            <h3>Specyfikacja Medalu</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Materiał:</label>
+                                    <select id="medal-material">
+                                        <option value="plastik-8">Plastik (+8 zł)</option>
+                                        <option value="metal-15">Metal (+15 zł)</option>
+                                        <option value="mosiadz-25">Mosiądz (+25 zł)</option>
+                                        <option value="srebro-45">Srebro platerowane (+45 zł)</option>
+                                        <option value="zloto-65">Złoto platerowane (+65 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Średnica:</label>
+                                    <select id="medal-diameter">
+                                        <option value="32mm-0">32mm (+0 zł)</option>
+                                        <option value="50mm-5">50mm (+5 zł)</option>
+                                        <option value="60mm-12">60mm (+12 zł)</option>
+                                        <option value="70mm-18">70mm (+18 zł)</option>
+                                        <option value="100mm-35">100mm (+35 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Grubość:</label>
+                                    <select id="medal-thickness">
+                                        <option value="cienki-0">Cienki 2mm (+0 zł)</option>
+                                        <option value="standardowy-3">Standardowy 3mm (+3 zł)</option>
+                                        <option value="gruby-8">Gruby 4-5mm (+8 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Wzór:</label>
+                                    <select id="medal-pattern">
+                                        <option value="standardowy-0">Standardowy (+0 zł)</option>
+                                        <option value="sportowy-8">Sportowy (+8 zł)</option>
+                                        <option value="okolicznosciowy-12">Okolicznościowy (+12 zł)</option>
+                                        <option value="wlasny-25">Własny projekt (+25 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Wstążka:</label>
+                                    <select id="medal-ribbon">
+                                        <option value="podstawowa-3">Podstawowa (+3 zł)</option>
+                                        <option value="premium-8">Premium (+8 zł)</option>
+                                        <option value="wlasne-kolory-12">Własne kolory (+12 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Opakowanie:</label>
+                                    <select id="medal-packaging">
+                                        <option value="woreczek-1">Woreczek (+1 zł)</option>
+                                        <option value="pudelko-5">Pudełko prezentowe (+5 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="medal-engraving">
+                                        <label for="medal-engraving">Grawer rewers (+8 zł)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- KOMIN -->
+                    <div class="product-config" id="komin">
+                        <div class="config-group">
+                            <h3>Specyfikacja Komina</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Materiał:</label>
+                                    <select id="komin-material">
+                                        <option value="poliester-5">Poliester (+5 zł)</option>
+                                        <option value="nylon-8">Nylon (+8 zł)</option>
+                                        <option value="bambus-12">Bambus (+12 zł)</option>
+                                        <option value="welna-15">Wełna (+15 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Szerokość:</label>
+                                    <select id="komin-width">
+                                        <option value="waski-0">Wąski 10mm (+0 zł)</option>
+                                        <option value="standardowy-2">Standardowy 15mm (+2 zł)</option>
+                                        <option value="szeroki-5">Szeroki 20mm (+5 zł)</option>
+                                        <option value="bardzo-szeroki-8">Bardzo szeroki 25mm+ (+8 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Długość:</label>
+                                    <select id="komin-length">
+                                        <option value="standardowa-0">Standardowa 45cm (+0 zł)</option>
+                                        <option value="dluga-3">Długa 60cm (+3 zł)</option>
+                                        <option value="regulowana-8">Regulowana (+8 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nadruk:</label>
+                                    <select id="komin-print">
+                                        <option value="brak-0">Brak (+0 zł)</option>
+                                        <option value="sitodruk-8">Sitodruk (+8 zł)</option>
+                                        <option value="transfer-10">Transfer (+10 zł)</option>
+                                        <option value="haft-15">Haft (+15 zł)</option>
+                                        <option value="sublimacja-12">Sublimacja (+12 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Karabińczyk:</label>
+                                    <select id="komin-clip">
+                                        <option value="standardowy-1">Standardowy (+1 zł)</option>
+                                        <option value="metalowy-3">Metalowy (+3 zł)</option>
+                                        <option value="plastikowy-1">Plastikowy (+1 zł)</option>
+                                        <option value="magnes-5">Magnes (+5 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Końcówki:</label>
+                                    <select id="komin-ends">
+                                        <option value="standardowe-0">Standardowe (+0 zł)</option>
+                                        <option value="metalowe-4">Metalowe (+4 zł)</option>
+                                        <option value="plastikowe-2">Plastikowe (+2 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="komin-safety">
+                                        <label for="komin-safety">Zapięcie bezpieczeństwa (+3 zł)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- KOSZULKA -->
+                    <div class="product-config" id="koszulka">
+                        <div class="config-group">
+                            <h3>Specyfikacja Koszulki</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Materiał:</label>
+                                    <select id="koszulka-material">
+                                        <option value="bawelna100-15">Bawełna 100% (+15 zł)</option>
+                                        <option value="bawelna-poliester-12">Bawełna/Poliester (+12 zł)</option>
+                                        <option value="poliester100-10">Poliester 100% (+10 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Gramatura:</label>
+                                    <select id="koszulka-weight">
+                                        <option value="lekka-0">Lekka 140g (+0 zł)</option>
+                                        <option value="standardowa-3">Standardowa 160g (+3 zł)</option>
+                                        <option value="ciezka-8">Ciężka 190g (+8 zł)</option>
+                                        <option value="premium-15">Premium 220g+ (+15 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Rozmiar:</label>
+                                    <select id="koszulka-size">
+                                        <option value="xs-0">XS (+0 zł)</option>
+                                        <option value="s-0">S (+0 zł)</option>
+                                        <option value="m-0">M (+0 zł)</option>
+                                        <option value="l-0">L (+0 zł)</option>
+                                        <option value="xl-3">XL (+3 zł)</option>
+                                        <option value="xxl-5">XXL (+5 zł)</option>
+                                        <option value="xxxl-8">XXXL (+8 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Krój:</label>
+                                    <select id="koszulka-cut">
+                                        <option value="unisex-0">Unisex (+0 zł)</option>
+                                        <option value="damski-2">Damski (+2 zł)</option>
+                                        <option value="meski-2">Męski (+2 zł)</option>
+                                        <option value="dzieciecy-minus3">Dziecięcy (-3 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Kolor:</label>
+                                    <select id="koszulka-color">
+                                        <option value="bialy-0">Biały (+0 zł)</option>
+                                        <option value="czarny-2">Czarny (+2 zł)</option>
+                                        <option value="kolorowy-5">Kolorowy (+5 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nadruk:</label>
+                                    <select id="koszulka-print">
+                                        <option value="brak-0">Brak (+0 zł)</option>
+                                        <option value="sitodruk-12">Sitodruk (+12 zł)</option>
+                                        <option value="transfer-15">Transfer (+15 zł)</option>
+                                        <option value="haft-25">Haft (+25 zł)</option>
+                                        <option value="sublimacja-18">Sublimacja (+18 zł)</option>
+                                        <option value="fleks-10">Fleks/Flock (+10 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Rozmiar nadruku:</label>
+                                    <select id="koszulka-print-size">
+                                        <option value="brak-0">Brak (+0 zł)</option>
+                                        <option value="maly-0">Mały A5 (+0 zł)</option>
+                                        <option value="sredni-5">Średni A4 (+5 zł)</option>
+                                        <option value="duzy-12">Duży A3 (+12 zł)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Pozycja nadruku:</label>
+                                    <select id="koszulka-print-position">
+                                        <option value="brak-0">Brak (+0 zł)</option>
+                                        <option value="przod-0">Przód (+0 zł)</option>
+                                        <option value="tyl-3">Tył (+3 zł)</option>
+                                        <option value="rekaw-5">Rękaw (+5 zł)</option>
+                                        <option value="wszedzie-15">Wszędzie (+15 zł)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="price-panel">
+                    <div class="price-summary">
+                        <h2>💰 Podsumowanie Ceny</h2>
+                        
+                        <div class="quantity-section">
+                            <h3>Ilość sztuk:</h3>
+                            <input type="number" class="quantity-input" id="quantity" value="1" min="1" placeholder="Wprowadź ilość">
+                        </div>
+                        
+                        <div class="price-breakdown" id="price-breakdown">
+                            <div class="price-item">
+                                <span>Cena bazowa:</span>
+                                <span id="base-price">0 zł</span>
+                            </div>
+                        </div>
+                        
+                        <div class="margin-section">
+                            <h3>📊 Analiza marży produktu</h3>
+                            <div class="margin-item">
+                                <span>Koszt produkcji:</span>
+                                <span id="production-cost">0 zł</span>
+                            </div>
+                            <div class="margin-item">
+                                <span>Cena sprzedaży:</span>
+                                <span id="sale-price">0 zł</span>
+                            </div>
+                            <div class="margin-item">
+                                <span>Zysk brutto:</span>
+                                <span id="gross-profit" style="color: #2ecc71;">0 zł</span>
+                            </div>
+                            <div class="margin-item">
+                                <span>Marża:</span>
+                                <span id="margin-percent" style="color: #2ecc71;">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="total-price">
+                            <div class="label">Łączna cena dla klienta:</div>
+                            <div class="amount" id="total-amount">0 zł</div>
+                            <div class="price-item">
+                                <span>Cena netto:</span>
+                                <span id="net-price">0 zł</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Cena brutto (z 23% VAT):</span>
+                                <span id="gross-price">0 zł</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px;"></div>
+                        
+                        <div class="discount-section">
+                            <h3>🛒 Koszyk produktów</h3>
+                            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                                <button onclick="addToCart()" style="flex: 1; padding: 10px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                    ➕ Dodaj do koszyka
+                                </button>
+                                <button onclick="clearCart()" style="padding: 10px 16px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                    🗑️ Wyczyść
+                                </button>
+                            </div>
+                            <div id="cart-items" style="max-height: 200px; overflow-y: auto; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; margin-bottom: 15px;">
+                                <div style="text-align: center; color: rgba(255,255,255,0.7); font-style: italic; padding: 20px;">
+                                    Koszyk jest pusty
+                                </div>
+                            </div>
+                            
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <h4 style="margin-bottom: 10px; color: #f39c12;">💰 Rabat specjalny na cały koszyk:</h4>
+                                <select id="special-discount" onchange="updateCartTotals()" style="width: 100%; padding: 10px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; margin-bottom: 10px;">
+                                    <option value="0" style="color: black;">Brak rabatu (0%)</option>
+                                    <option value="10" style="color: black;">Rabat 10%</option>
+                                    <option value="15" style="color: black;">Rabat 15%</option>
+                                    <option value="20" style="color: black;">Rabat 20%</option>
+                                    <option value="25" style="color: black;">Rabat 25%</option>
+                                    <option value="30" style="color: black;">Rabat 30%</option>
+                                    <option value="35" style="color: black;">Rabat 35%</option>
+                                    <option value="40" style="color: black;">Rabat 40%</option>
+                                </select>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.7); font-style: italic;">
+                                    💡 Rabat zostanie zastosowany do całej wartości koszyka
+                                </div>
+                            </div>
+                            
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-top: 2px solid rgba(255,255,255,0.3);">
+                                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1em; margin-bottom: 8px;">
+                                    <span>Wartość przed rabatem:</span>
+                                    <span id="cart-subtotal" style="color: #f39c12;">0 zł</span>
+                                </div>
+                                <div id="cart-special-discount-row" style="display: none; justify-content: space-between; font-weight: bold; font-size: 1em; margin-bottom: 8px; color: #e74c3c;">
+                                    <span>Rabat specjalny:</span>
+                                    <span id="cart-special-discount-amount">-0 zł</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2em; padding-top: 8px; border-top: 2px solid rgba(255,255,255,0.3);">
+                                    <span>ŁĄCZNA WARTOŚĆ:</span>
+                                    <span id="cart-total" style="color: #27ae60; font-size: 1.3em;">0 zł</span>
+                                </div>
+                            </div>
+                            
+                            <div class="margin-section" style="background: rgba(52, 152, 219, 0.1); border: 2px solid rgba(52, 152, 219, 0.3); margin-top: 15px;">
+                                <h3 style="color: #3498db;">📊 Analiza marży koszyka</h3>
+                                <div class="margin-item">
+                                    <span>Łączny koszt produkcji:</span>
+                                    <span id="cart-production-cost">0 zł</span>
+                                </div>
+                                <div class="margin-item">
+                                    <span>Łączna cena sprzedaży:</span>
+                                    <span id="cart-sale-price">0 zł</span>
+                                </div>
+                                <div class="margin-item">
+                                    <span>Łączny zysk brutto:</span>
+                                    <span id="cart-gross-profit" style="color: #2ecc71;">0 zł</span>
+                                </div>
+                                <div class="margin-item">
+                                    <span>Łączna marża koszyka:</span>
+                                    <span id="cart-margin-percent" style="color: #2ecc71;">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="save-section">
+                        <button class="save-btn" onclick="saveToExcel()">
+                            💾 Zapisz ofertę do Excel
+                        </button>
+                        <button class="client-offer-btn" onclick="saveClientOffer()">
+                            📋 Oferta dla klienta (Excel)
+                        </button>
+                        <button class="client-offer-btn" onclick="createPDFOrder()" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); margin-top: 10px;">
+                            📄 Utwórz zlecenie PDF
+                        </button>
+                        <input type="file" id="load-excel-input" accept=".xlsx,.xls" style="display: none;" onchange="loadFromExcel(event)">
+                        <button class="save-btn" onclick="document.getElementById('load-excel-input').click()" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); margin-top: 10px;">
+                            📂 Wczytaj ofertę z Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ExcelJS dla obsługi obrazów w Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <!-- jsPDF dla generowania PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    
+    <script>
+        // === SYSTEM LOGOWANIA ===
+        class AuthSystem {
+            constructor() {
+                this.users = this.loadUsers();
+                this.currentUser = null;
+                this.initEventListeners();
+                this.checkStoredSession();
+            }
+
+            // Domyślni użytkownicy (można dodać więcej)
+            getDefaultUsers() {
+                return {
+                    'admin': {
+                        username: 'admin',
+                        password: this.hashPassword('admin123'),
+                        role: 'administrator',
+                        fullName: 'Administrator'
+                    },
+                    'ane': {
+                        username: 'ane',
+                        password: this.hashPassword('ane2025'),
+                        role: 'user',
+                        fullName: 'ANE Revolution'
+                    }
+                };
+            }
+
+            // Prosta funkcja hashowania (nie używaj w produkcji!)
+            hashPassword(password) {
+                let hash = 0;
+                for (let i = 0; i < password.length; i++) {
+                    const char = password.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                return hash.toString();
+            }
+
+            // Załaduj użytkowników z localStorage lub użyj domyślnych
+            loadUsers() {
+                const stored = localStorage.getItem('anecalc_users');
+                if (stored) {
+                    try {
+                        return JSON.parse(stored);
+                    } catch (e) {
+                        console.warn('Błąd odczytu użytkowników, używam domyślnych');
+                    }
+                }
+                return this.getDefaultUsers();
+            }
+
+            // Zapisz użytkowników do localStorage
+            saveUsers() {
+                localStorage.setItem('anecalc_users', JSON.stringify(this.users));
+            }
+
+            // Sprawdź czy jest zapisana sesja
+            checkStoredSession() {
+                const storedUser = localStorage.getItem('anecalc_session');
+                if (storedUser) {
+                    try {
+                        const userData = JSON.parse(storedUser);
+                        if (this.users[userData.username]) {
+                            this.currentUser = userData;
+                            this.showMainApp();
+                            return;
+                        }
+                    } catch (e) {
+                        localStorage.removeItem('anecalc_session');
+                    }
+                }
+                this.showLoginForm();
+            }
+
+            // Inicjalizuj event listenery
+            initEventListeners() {
+                // Formularz logowania
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Formularz zmiany hasła
+                document.getElementById('changePasswordFormElement').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleChangePassword();
+                });
+
+                // Enter na polach logowania
+                document.getElementById('password').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.handleLogin();
+                    }
+                });
+            }
+
+            // Obsługa logowania
+            handleLogin() {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+
+                if (!username || !password) {
+                    this.showError('Wprowadź nazwę użytkownika i hasło');
+                    return;
+                }
+
+                const user = this.users[username];
+                if (!user) {
+                    this.showError('Nieprawidłowa nazwa użytkownika lub hasło');
+                    return;
+                }
+
+                const hashedPassword = this.hashPassword(password);
+                if (user.password !== hashedPassword) {
+                    this.showError('Nieprawidłowa nazwa użytkownika lub hasło');
+                    return;
+                }
+
+                // Logowanie udane
+                this.currentUser = {
+                    username: user.username,
+                    fullName: user.fullName,
+                    role: user.role,
+                    loginTime: new Date().toISOString()
+                };
+
+                // Zapisz sesję
+                localStorage.setItem('anecalc_session', JSON.stringify(this.currentUser));
+
+                this.showSuccess('Logowanie udane! Przekierowywanie...');
+                
+                setTimeout(() => {
+                    this.showMainApp();
+                }, 1000);
+            }
+
+            // Obsługa zmiany hasła
+            handleChangePassword() {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    this.showError('Wypełnij wszystkie pola');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    this.showError('Nowe hasła nie są identyczne');
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    this.showError('Nowe hasło musi mieć co najmniej 6 znaków');
+                    return;
+                }
+
+                // Sprawdź obecne hasło (dla zalogowanego użytkownika lub dla podanej nazwy użytkownika)
+                let targetUsername;
+                if (this.currentUser) {
+                    targetUsername = this.currentUser.username;
+                } else {
+                    const usernameField = document.getElementById('username').value.trim();
+                    if (!usernameField) {
+                        this.showError('Wprowadź nazwę użytkownika');
+                        return;
+                    }
+                    targetUsername = usernameField;
+                }
+
+                const user = this.users[targetUsername];
+                if (!user) {
+                    this.showError('Użytkownik nie istnieje');
+                    return;
+                }
+
+                const hashedCurrentPassword = this.hashPassword(currentPassword);
+                if (user.password !== hashedCurrentPassword) {
+                    this.showError('Obecne hasło jest nieprawidłowe');
+                    return;
+                }
+
+                // Zmień hasło
+                this.users[targetUsername].password = this.hashPassword(newPassword);
+                this.saveUsers();
+
+                this.showSuccess('Hasło zostało zmienione pomyślnie!');
+
+                // Wyczyść formularz i ukryj sekcję zmiany hasła
+                document.getElementById('changePasswordFormElement').reset();
+                setTimeout(() => {
+                    this.toggleChangePassword();
+                }, 2000);
+            }
+
+            // Wylogowanie
+            logout() {
+                if (confirm('Czy na pewno chcesz się wylogować?')) {
+                    this.currentUser = null;
+                    localStorage.removeItem('anecalc_session');
+                    this.showLoginForm();
+                    
+                    // Wyczyść formularz logowania
+                    document.getElementById('loginForm').reset();
+                    document.getElementById('changePasswordFormElement').reset();
+                    
+                    // Ukryj sekcję zmiany hasła jeśli była widoczna
+                    const changePasswordForm = document.getElementById('changePasswordForm');
+                    if (changePasswordForm.style.display === 'block') {
+                        this.toggleChangePassword();
+                    }
+                }
+            }
+
+            // Pokaż formularz logowania
+            showLoginForm() {
+                document.getElementById('loginContainer').style.display = 'block';
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                
+                // Focus na pole username
+                setTimeout(() => {
+                    document.getElementById('username').focus();
+                }, 100);
+            }
+
+            // Pokaż główną aplikację
+            showMainApp() {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'block';
+                
+                // Aktualizuj informacje o użytkowniku
+                document.getElementById('loggedUsername').textContent = this.currentUser.fullName || this.currentUser.username;
+                
+                // Inicjalizuj główną aplikację
+                this.initMainApp();
+            }
+
+            // Inicjalizuj główną aplikację (uruchom wszystkie funkcje kalkulatora)
+            initMainApp() {
+                // Tutaj uruchamiamy wszystkie funkcje z oryginalnej aplikacji
+                setupEventListeners();
+                initializeOfferData();
+                calculatePrice();
+            }
+
+            // Pokaż błąd
+            showError(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                const successDiv = document.getElementById('successMessage');
+                
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+                
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
+
+            // Pokaż sukces
+            showSuccess(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                const successDiv = document.getElementById('successMessage');
+                
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+                
+                setTimeout(() => {
+                    successDiv.style.display = 'none';
+                }, 3000);
+            }
+
+            // Toggle zmiany hasła
+            toggleChangePassword() {
+                const form = document.getElementById('changePasswordForm');
+                const isVisible = form.style.display === 'block';
+                
+                form.style.display = isVisible ? 'none' : 'block';
+                
+                if (!isVisible) {
+                    setTimeout(() => {
+                        document.getElementById('currentPassword').focus();
+                    }, 100);
+                }
+            }
+        }
+
+        // Utwórz instancję systemu autoryzacji
+        const authSystem = new AuthSystem();
+
+        // Globalne funkcje dla przycisków
+        function logout() {
+            authSystem.logout();
+        }
+
+        function toggleChangePassword() {
+            authSystem.toggleChangePassword();
+        }
+
+        // === ORYGINALNY KOD KALKULATORA (skopiowany z pliku) ===
+        
+        // Ceny bazowe dla każdego produktu
+        const basePrices = {
+            puchar: 25,
+            statuetka: 30,
+            medal: 10,
+            komin: 8,
+            koszulka: 20
+        };
+        
+        // Koszty produkcji (60% ceny sprzedaży jako domyślny koszt)
+        const productionCostMultiplier = 0.6;
+
+        // Dane w pamięci
+        let cart = []; // Koszyk produktów
+        let currentProduct = 'puchar';
+        let quantity = 1;
+
+        // Inicjalizacja (będzie wywołana przez authSystem po zalogowaniu)
+        function setupEventListeners() {
+            // Zakładki produktów
+            document.querySelectorAll('.product-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    switchProduct(this.dataset.product);
+                });
+            });
+
+            // Ilość
+            document.getElementById('quantity').addEventListener('input', function() {
+                quantity = parseInt(this.value) || 1;
+                calculatePrice();
+            });
+            
+            // Wszystkie selecty i checkboxy
+            document.addEventListener('change', function(e) {
+                if (e.target.matches('select') || e.target.matches('input[type="checkbox"]')) {
+                    calculatePrice();
+                }
+            });
+
+            // Formatowanie NIP podczas wpisywania
+            document.getElementById('client-nip').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/[^\d]/g, '');
+                
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
+                }
+                
+                if (value.length > 6) {
+                    value = value.substring(0, 3) + '-' + value.substring(3, 6) + '-' + value.substring(6, 8) + '-' + value.substring(8);
+                } else if (value.length > 3) {
+                    value = value.substring(0, 3) + '-' + value.substring(3);
+                }
+                
+                e.target.value = value;
+            });
+            
+            updateCartTotals();
+
+            // Formatowanie KRS (tylko cyfry, max 10)
+            document.getElementById('client-krs').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/[^\d]/g, '');
+                
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
+                }
+                
+                e.target.value = value;
+            });
+
+            // Formatowanie numeru telefonu
+            document.getElementById('client-phone').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/[^\d\+]/g, '');
+                
+                if (value.startsWith('+48')) {
+                    value = value.substring(0, 12);
+                    if (value.length > 6) {
+                        value = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6, 9) + ' ' + value.substring(9);
+                    } else if (value.length > 3) {
+                        value = value.substring(0, 3) + ' ' + value.substring(3);
+                    }
+                } else if (value.startsWith('48')) {
+                    value = '+' + value;
+                    value = value.substring(0, 12);
+                    if (value.length > 6) {
+                        value = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6, 9) + ' ' + value.substring(9);
+                    } else if (value.length > 3) {
+                        value = value.substring(0, 3) + ' ' + value.substring(3);
+                    }
+                } else if (value.length > 0 && !value.startsWith('+')) {
+                    if (value.length <= 9) {
+                        if (value.length > 6) {
+                            value = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6);
+                        } else if (value.length > 3) {
+                            value = value.substring(0, 3) + ' ' + value.substring(3);
+                        }
+                    }
+                }
+                
+                e.target.value = value;
+            });
+        }
+        
+        function initializeOfferData() {
+            // Ustaw dzisiejszą datę
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('offer-date').value = today;
+            
+            // Generuj numer oferty z formatem OF/rok/miesiąc/ddmmhhmm
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = getPolishMonthName(now.getMonth());
+            const day = String(now.getDate()).padStart(2, '0');
+            const monthNum = String(now.getMonth() + 1).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const dateTimeString = `${day}${monthNum}${hours}${minutes}`;
+            
+            const offerNumber = `OF/${year}/${month}/${dateTimeString}`;
+            document.getElementById('offer-number').value = offerNumber;
+        }
+        
+        function getPolishMonthName(monthIndex) {
+            const months = [
+                'styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec',
+                'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'
+            ];
+            return months[monthIndex];
+        }
+
+        function switchProduct(product) {
+            document.querySelectorAll('.product-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-product="${product}"]`).classList.add('active');
+
+            document.querySelectorAll('.product-config').forEach(config => {
+                config.classList.remove('active');
+            });
+            document.getElementById(product).classList.add('active');
+
+            currentProduct = product;
+            calculatePrice();
+        }
+
+        function calculatePrice() {
+            const basePrice = basePrices[currentProduct];
+            let unitPrice = basePrice;
+            const breakdown = [];
+
+            breakdown.push({
+                name: 'Cena bazowa',
+                price: basePrice
+            });
+
+            const activeConfig = document.getElementById(currentProduct);
+            const selects = activeConfig.querySelectorAll('select');
+            const checkboxes = activeConfig.querySelectorAll('input[type="checkbox"]');
+
+            selects.forEach(select => {
+                const value = select.value;
+                if (value) {
+                    const parts = value.split('-');
+                    if (parts.length >= 2) {
+                        const price = parseInt(parts[parts.length - 1]) || 0;
+                        const name = select.previousElementSibling.textContent;
+                        const optionText = select.options[select.selectedIndex].text;
+                        
+                        unitPrice += price;
+                        if (price !== 0) {
+                            breakdown.push({
+                                name: `${name} ${optionText.split('(')[0].trim()}`,
+                                price: price
+                            });
+                        }
+                    }
+                }
+            });
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const labelText = checkbox.nextElementSibling.textContent;
+                    const match = labelText.match(/\(\+(\d+) zł\)/);
+                    if (match) {
+                        const price = parseInt(match[1]);
+                        unitPrice += price;
+                        breakdown.push({
+                            name: labelText.split('(')[0].trim(),
+                            price: price
+                        });
+                    }
+                }
+            });
+
+            let subtotal = unitPrice * quantity;
+            let finalPrice = subtotal;
+            
+            let quantityDiscount = 0;
+            let quantityDiscountAmount = 0;
+            
+            if (quantity >= 1000) {
+                quantityDiscount = 25;
+            } else if (quantity >= 250) {
+                quantityDiscount = 20;
+            } else if (quantity >= 100) {
+                quantityDiscount = 15;
+            } else if (quantity >= 50) {
+                quantityDiscount = 12;
+            } else if (quantity >= 10) {
+                quantityDiscount = 8;
+            }
+            
+            if (quantityDiscount > 0) {
+                quantityDiscountAmount = Math.round(subtotal * (quantityDiscount / 100));
+                finalPrice = subtotal - quantityDiscountAmount;
+            }
+            
+            updatePriceDisplay(breakdown, unitPrice, subtotal, finalPrice, quantityDiscount, quantityDiscountAmount);
+        }
+
+        function updatePriceDisplay(breakdown, unitPrice, subtotal, finalPrice, quantityDiscount, quantityDiscountAmount) {
+            const priceBreakdown = document.getElementById('price-breakdown');
+            const totalAmount = document.getElementById('total-amount');
+
+            priceBreakdown.innerHTML = '';
+
+            breakdown.forEach(item => {
+                const priceItem = document.createElement('div');
+                priceItem.className = 'price-item';
+                priceItem.innerHTML = `
+                    <span>${item.name}:</span>
+                    <span>${item.price >= 0 ? '+' : ''}${item.price} zł</span>
+                `;
+                priceBreakdown.appendChild(priceItem);
+            });
+
+            const unitPriceItem = document.createElement('div');
+            unitPriceItem.className = 'price-item';
+            unitPriceItem.style.borderTop = '2px solid rgba(255,255,255,0.3)';
+            unitPriceItem.style.fontWeight = 'bold';
+            unitPriceItem.innerHTML = `
+                <span>Cena za sztukę:</span>
+                <span>${unitPrice} zł</span>
+            `;
+            priceBreakdown.appendChild(unitPriceItem);
+
+            if (quantity > 1) {
+                const quantityItem = document.createElement('div');
+                quantityItem.className = 'price-item';
+                quantityItem.innerHTML = `
+                    <span>Ilość:</span>
+                    <span>${quantity} szt.</span>
+                `;
+                priceBreakdown.appendChild(quantityItem);
+                
+                const subtotalItem = document.createElement('div');
+                subtotalItem.className = 'price-item';
+                subtotalItem.innerHTML = `
+                    <span>Subtotal:</span>
+                    <span>${subtotal} zł</span>
+                `;
+                priceBreakdown.appendChild(subtotalItem);
+            }
+
+            if (quantityDiscount > 0) {
+                const discountLabel = getQuantityDiscountLabel(quantity, quantityDiscount);
+                const discountItem = document.createElement('div');
+                discountItem.className = 'price-item';
+                discountItem.style.color = '#2ecc71';
+                discountItem.style.fontWeight = 'bold';
+                discountItem.innerHTML = `
+                    <span>${discountLabel}:</span>
+                    <span>-${quantityDiscountAmount} zł</span>
+                `;
+                priceBreakdown.appendChild(discountItem);
+            }
+            
+            if (quantity < 1000) {
+                const nextThreshold = getNextDiscountThreshold(quantity);
+                if (nextThreshold) {
+                    const infoItem = document.createElement('div');
+                    infoItem.className = 'price-item';
+                    infoItem.style.color = '#f39c12';
+                    infoItem.style.fontSize = '12px';
+                    infoItem.style.fontStyle = 'italic';
+                    infoItem.innerHTML = `
+                        <span>💡 ${nextThreshold.message}</span>
+                        <span></span>
+                    `;
+                    priceBreakdown.appendChild(infoItem);
+                }
+            }
+
+            totalAmount.textContent = `${Math.round(finalPrice)} zł`;
+            const netPrice = Math.round(finalPrice / 1.23);
+            const grossPrice = Math.round(finalPrice);
+
+            document.getElementById('net-price').textContent = `${netPrice} zł`;
+            document.getElementById('gross-price').textContent = `${grossPrice} zł`;
+            
+            updateMarginAnalysis(unitPrice, Math.round(finalPrice));
+        }
+        
+        function getQuantityDiscountLabel(quantity, discount) {
+            if (quantity >= 1000) {
+                return `🎉 Rabat mega hurtowy ${discount}% (1000+ szt.)`;
+            } else if (quantity >= 250) {
+                return `🏆 Rabat hurtowy ${discount}% (250+ szt.)`;
+            } else if (quantity >= 100) {
+                return `📦 Rabat większy ${discount}% (100+ szt.)`;
+            } else if (quantity >= 50) {
+                return `📊 Rabat standardowy ${discount}% (50+ szt.)`;
+            } else if (quantity >= 10) {
+                return `🎯 Rabat podstawowy ${discount}% (10+ szt.)`;
+            }
+            return `Rabat ${discount}%`;
+        }
+        
+        function getNextDiscountThreshold(currentQuantity) {
+            if (currentQuantity < 10) {
+                return {
+                    threshold: 10,
+                    discount: 8,
+                    message: `Zamów ${10 - currentQuantity} więcej i otrzymasz 8% rabatu!`
+                };
+            } else if (currentQuantity < 50) {
+                return {
+                    threshold: 50,
+                    discount: 12,
+                    message: `Do rabatu 12% brakuje ${50 - currentQuantity} sztuk`
+                };
+            } else if (currentQuantity < 100) {
+                return {
+                    threshold: 100,
+                    discount: 15,
+                    message: `Do rabatu 15% brakuje ${100 - currentQuantity} sztuk`
+                };
+            } else if (currentQuantity < 250) {
+                return {
+                    threshold: 250,
+                    discount: 20,
+                    message: `Do rabatu 20% brakuje ${250 - currentQuantity} sztuk`
+                };
+            } else if (currentQuantity < 1000) {
+                return {
+                    threshold: 1000,
+                    discount: 25,
+                    message: `Do mega rabatu 25% brakuje ${1000 - currentQuantity} sztuk!`
+                };
+            }
+            return null;
+        }
+        
+        function updateMarginAnalysis(unitPrice, finalPrice) {
+            const productionCost = Math.round((unitPrice * quantity) * productionCostMultiplier);
+            const grossProfit = finalPrice - productionCost;
+            const marginPercent = ((grossProfit / finalPrice) * 100).toFixed(1);
+            
+            document.getElementById('production-cost').textContent = `${productionCost} zł`;
+            document.getElementById('sale-price').textContent = `${finalPrice} zł`;
+            document.getElementById('gross-profit').textContent = `${grossProfit} zł`;
+            document.getElementById('margin-percent').textContent = `${marginPercent}%`;
+        }
+
+        // Funkcja do pobierania danych z KRS/NIP
+        async function fetchCompanyData(type) {
+            alert('⚠️ Funkcja pobierania danych z KRS/NIP jest wyłączona w wersji demo.\n\nW pełnej wersji można pobierać dane firm automatycznie.');
+        }
+
+        function addToCart() {
+            const basePrice = basePrices[currentProduct];
+            let unitPrice = basePrice;
+            const productConfig = [];
+
+            const activeConfig = document.getElementById(currentProduct);
+            const selects = activeConfig.querySelectorAll('select');
+            const checkboxes = activeConfig.querySelectorAll('input[type="checkbox"]');
+
+            selects.forEach(select => {
+                const value = select.value;
+                if (value) {
+                    const parts = value.split('-');
+                    if (parts.length >= 2) {
+                        const price = parseInt(parts[parts.length - 1]) || 0;
+                        const name = select.previousElementSibling.textContent;
+                        const optionText = select.options[select.selectedIndex].text;
+                        
+                        unitPrice += price;
+                        productConfig.push(`${name} ${optionText.split('(')[0].trim()}`);
+                    }
+                }
+            });
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const labelText = checkbox.nextElementSibling.textContent;
+                    const match = labelText.match(/\(\+(\d+) zł\)/);
+                    if (match) {
+                        const price = parseInt(match[1]);
+                        unitPrice += price;
+                        productConfig.push(labelText.split('(')[0].trim());
+                    }
+                }
+            });
+
+            let subtotal = unitPrice * quantity;
+            let finalPrice = subtotal;
+            
+            let quantityDiscount = 0;
+            let quantityDiscountAmount = 0;
+            
+            if (quantity >= 1000) {
+                quantityDiscount = 25;
+            } else if (quantity >= 250) {
+                quantityDiscount = 20;
+            } else if (quantity >= 100) {
+                quantityDiscount = 15;
+            } else if (quantity >= 50) {
+                quantityDiscount = 12;
+            } else if (quantity >= 10) {
+                quantityDiscount = 8;
+            }
+            
+            if (quantityDiscount > 0) {
+                quantityDiscountAmount = Math.round(subtotal * (quantityDiscount / 100));
+                finalPrice = subtotal - quantityDiscountAmount;
+            }
+
+            const cartItem = {
+                id: Date.now(),
+                product: currentProduct,
+                productName: getProductDisplayName(currentProduct),
+                quantity: quantity,
+                unitPrice: unitPrice,
+                subtotal: subtotal,
+                finalPrice: finalPrice,
+                quantityDiscount: quantityDiscount,
+                quantityDiscountAmount: quantityDiscountAmount,
+                quantityDiscountLabel: quantityDiscount > 0 ? getQuantityDiscountLabel(quantity, quantityDiscount) : '',
+                config: productConfig.join('; '),
+                productionCost: Math.round((unitPrice * quantity) * productionCostMultiplier)
+            };
+
+            cart.push(cartItem);
+            updateCartDisplay();
+            
+            const productName = getProductDisplayName(currentProduct);
+            alert(`✅ Dodano do koszyka:\n${quantity}x ${productName}\nCena: ${finalPrice} zł`);
+        }
+
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            updateCartDisplay();
+        }
+
+        function clearCart() {
+            if (cart.length === 0) {
+                alert('🛒 Koszyk jest już pusty');
+                return;
+            }
+            
+            if (confirm('🗑️ Czy na pewno chcesz wyczyścić cały koszyk?')) {
+                cart = [];
+                updateCartDisplay();
+                alert('✅ Koszyk został wyczyszczony');
+            }
+        }
+
+        function updateCartDisplay() {
+            const cartItemsDiv = document.getElementById('cart-items');
+
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = `
+                    <div style="text-align: center; color: rgba(255,255,255,0.7); font-style: italic; padding: 20px;">
+                        Koszyk jest pusty
+                    </div>
+                `;
+                updateCartTotals();
+                return;
+            }
+
+            let cartHTML = '';
+
+            cart.forEach(item => {
+                cartHTML += `
+                    <div style="background: rgba(255,255,255,0.1); margin-bottom: 8px; padding: 12px; border-radius: 6px; border-left: 4px solid #3498db;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                            <div style="font-weight: bold; font-size: 14px;">${item.quantity}x ${item.productName}</div>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <span style="font-weight: bold; color: #f39c12;">${item.finalPrice} zł</span>
+                                <button onclick="removeFromCart(${item.id})" style="background: #e74c3c; color: white; border: none; border-radius: 4px; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.8); margin-bottom: 4px;">
+                            ${item.config || 'Standardowa konfiguracja'}
+                        </div>
+                        <div style="font-size: 10px; color: rgba(255,255,255,0.6);">
+                            Cena jedn.: ${item.unitPrice} zł${item.quantityDiscount > 0 ? ` | Rabat: ${item.quantityDiscount}% (-${item.quantityDiscountAmount} zł)` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            cartItemsDiv.innerHTML = cartHTML;
+            updateCartTotals();
+        }
+
+        function updateCartTotals() {
+            const cartSubtotalSpan = document.getElementById('cart-subtotal');
+            const cartTotalSpan = document.getElementById('cart-total');
+            const cartSpecialDiscountRow = document.getElementById('cart-special-discount-row');
+            const cartSpecialDiscountAmount = document.getElementById('cart-special-discount-amount');
+            
+            const cartProductionCost = document.getElementById('cart-production-cost');
+            const cartSalePrice = document.getElementById('cart-sale-price');
+            const cartGrossProfit = document.getElementById('cart-gross-profit');
+            const cartMarginPercent = document.getElementById('cart-margin-percent');
+
+            if (cart.length === 0) {
+                cartSubtotalSpan.textContent = '0 zł';
+                cartTotalSpan.textContent = '0 zł';
+                cartSpecialDiscountRow.style.display = 'none';
+                cartProductionCost.textContent = '0 zł';
+                cartSalePrice.textContent = '0 zł';
+                cartGrossProfit.textContent = '0 zł';
+                cartMarginPercent.textContent = '0%';
+                return;
+            }
+
+            let totalCartValue = 0;
+            let totalProductionCost = 0;
+
+            cart.forEach(item => {
+                totalCartValue += item.finalPrice;
+                totalProductionCost += item.productionCost;
+            });
+
+            const specialDiscount = parseInt(document.getElementById('special-discount').value) || 0;
+            let specialDiscountAmountValue = 0;
+            let finalCartValue = totalCartValue;
+
+            if (specialDiscount > 0) {
+                specialDiscountAmountValue = Math.round(totalCartValue * (specialDiscount / 100));
+                finalCartValue = totalCartValue - specialDiscountAmountValue;
+                cartSpecialDiscountRow.style.display = 'flex';
+                cartSpecialDiscountAmount.textContent = `-${specialDiscountAmountValue} zł (${specialDiscount}%)`;
+            } else {
+                cartSpecialDiscountRow.style.display = 'none';
+            }
+
+            const totalGrossProfit = finalCartValue - totalProductionCost;
+            const totalMarginPercent = finalCartValue > 0 ? ((totalGrossProfit / finalCartValue) * 100).toFixed(1) : 0;
+
+            cartSubtotalSpan.textContent = `${totalCartValue} zł`;
+            cartTotalSpan.textContent = `${finalCartValue} zł`;
+            
+            cartProductionCost.textContent = `${totalProductionCost} zł`;
+            cartSalePrice.textContent = `${finalCartValue} zł`;
+            cartGrossProfit.textContent = `${totalGrossProfit} zł`;
+            cartMarginPercent.textContent = `${totalMarginPercent}%`;
+        }
+
+        function getProductDisplayName(product) {
+            const names = {
+                puchar: '🏆 Puchar',
+                statuetka: '🎖️ Statuetka',
+                medal: '🥇 Medal',
+                komin: '🎗️ Komin',
+                koszulka: '👕 Koszulka'
+            };
+            return names[product] || product;
+        }
+
+        function imageToBase64(imageUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    const dataURL = canvas.toDataURL('image/png');
+                    resolve(dataURL);
+                };
+                img.onerror = function() {
+                    reject('Nie można załadować obrazu');
+                };
+                img.src = imageUrl;
+            });
+        }
+
+        async function saveToExcel() {
+            try {
+                if (typeof ExcelJS === 'undefined') {
+                    alert('❌ Błąd: Biblioteka ExcelJS nie jest dostępna. Odśwież stronę i spróbuj ponownie.');
+                    return;
+                }
+                
+                if (cart.length === 0) {
+                    alert('❌ Koszyk jest pusty. Dodaj produkty do koszyka przed zapisaniem oferty.');
+                    return;
+                }
+                
+                const clientData = {
+                    clientName: document.getElementById('client-name').value || 'BRAK_NAZWY',
+                    clientKRS: document.getElementById('client-krs').value || 'Brak danych',
+                    clientNIP: document.getElementById('client-nip').value || 'Brak danych',
+                    clientAddress: document.getElementById('client-address').value || 'Brak danych',
+                    offerDate: document.getElementById('offer-date').value || 'Brak danych',
+                    offerNumber: document.getElementById('offer-number').value || 'Brak danych',
+                    clientContact: document.getElementById('client-contact').value || 'Brak danych',
+                    clientEmail: document.getElementById('client-email').value || 'Brak danych',
+                    clientPhone: document.getElementById('client-phone').value || 'Brak danych',
+                    specialDiscount: document.getElementById('special-discount').value + '%',
+                    sold: 'NIE'
+                };
+                
+                let totalCartValue = 0;
+                let totalProductionCost = 0;
+                
+                cart.forEach(item => {
+                    totalCartValue += item.finalPrice;
+                    totalProductionCost += item.productionCost;
+                });
+                
+                const specialDiscount = parseInt(document.getElementById('special-discount').value) || 0;
+                let finalOfferValue = totalCartValue;
+                let specialDiscountAmount = 0;
+                
+                if (specialDiscount > 0) {
+                    specialDiscountAmount = Math.round(totalCartValue * (specialDiscount / 100));
+                    finalOfferValue = totalCartValue - specialDiscountAmount;
+                }
+                
+                const finalGrossProfit = finalOfferValue - totalProductionCost;
+                const finalMarginPercent = ((finalGrossProfit / finalOfferValue) * 100).toFixed(1);
+                
+                const workbook = new ExcelJS.Workbook();
+                const worksheet = workbook.addWorksheet('Oferta');
+                
+                worksheet.columns = [
+                    { header: 'Nr oferty', key: 'offerNumber', width: 25 },
+                    { header: 'Pozycja', key: 'position', width: 8 },
+                    { header: 'Data', key: 'date', width: 12 },
+                    { header: 'Klient', key: 'client', width: 30 },
+                    { header: 'KRS', key: 'krs', width: 15 },
+                    { header: 'NIP', key: 'nip', width: 15 },
+                    { header: 'Adres', key: 'address', width: 40 },
+                    { header: 'Kontakt', key: 'contact', width: 25 },
+                    { header: 'Email', key: 'email', width: 30 },
+                    { header: 'Telefon', key: 'phone', width: 20 },
+                    { header: 'Produkt', key: 'product', width: 15 },
+                    { header: 'Konfiguracja', key: 'config', width: 40 },
+                    { header: 'Ilość', key: 'quantity', width: 8 },
+                    { header: 'Cena jedn.', key: 'unitPrice', width: 12 },
+                    { header: 'Subtotal przed rabatem', key: 'subtotal', width: 20 },
+                    { header: 'Rabat ilościowy', key: 'quantityDiscount', width: 35 },
+                    { header: 'Cena po rabacie ilościowym', key: 'priceAfterQuantityDiscount', width: 25 },
+                    { header: 'Rabat specjalny na pozycję', key: 'specialDiscountItem', width: 25 },
+                    { header: 'Cena finalna pozycji', key: 'finalItemPrice', width: 20 },
+                    { header: 'Cena netto', key: 'netPrice', width: 15 },
+                    { header: 'Cena brutto', key: 'grossPrice', width: 15 },
+                    { header: 'Koszt produkcji', key: 'productionCost', width: 15 },
+                    { header: 'Zysk pozycji', key: 'itemProfit', width: 12 },
+                    { header: 'Marża pozycji', key: 'itemMargin', width: 12 },
+                    { header: 'Wartość przed rabatem spec.', key: 'totalBeforeSpecial', width: 25 },
+                    { header: 'Rabat specjalny całość', key: 'specialDiscountTotal', width: 25 },
+                    { header: 'Wartość oferty końcowa', key: 'finalOfferValue', width: 20 },
+                    { header: 'Łączny koszt produkcji', key: 'totalProductionCost', width: 20 },
+                    { header: 'Łączny zysk', key: 'totalProfit', width: 15 },
+                    { header: 'Łączna marża', key: 'totalMargin', width: 12 },
+                    { header: 'Sprzedane', key: 'sold', width: 12 },
+                    { header: 'Utworzono', key: 'created', width: 20 }
+                ];
+                
+                const timestamp = new Date().toLocaleString('pl-PL');
+                
+                cart.forEach((item, index) => {
+                    const itemSpecialDiscountAmount = Math.round((item.finalPrice / totalCartValue) * specialDiscountAmount);
+                    const itemFinalPrice = item.finalPrice - itemSpecialDiscountAmount;
+                    const itemFinalGrossProfit = itemFinalPrice - item.productionCost;
+                    const itemFinalMarginPercent = ((itemFinalGrossProfit / itemFinalPrice) * 100).toFixed(1);
+                    
+                    worksheet.addRow({
+                        offerNumber: clientData.offerNumber,
+                        position: index + 1,
+                        date: clientData.offerDate,
+                        client: clientData.clientName,
+                        krs: clientData.clientKRS,
+                        nip: clientData.clientNIP,
+                        address: clientData.clientAddress,
+                        contact: clientData.clientContact,
+                        email: clientData.clientEmail,
+                        phone: clientData.clientPhone,
+                        product: item.productName,
+                        config: item.config || 'Standardowa',
+                        quantity: item.quantity,
+                        unitPrice: `${item.unitPrice} zł`,
+                        subtotal: `${item.subtotal} zł`,
+                        quantityDiscount: item.quantityDiscount > 0 ? `${item.quantityDiscountLabel} (-${item.quantityDiscountAmount} zł)` : 'Brak',
+                        priceAfterQuantityDiscount: `${item.finalPrice} zł`,
+                        specialDiscountItem: specialDiscount > 0 ? `${specialDiscount}% (-${itemSpecialDiscountAmount} zł)` : 'Brak',
+                        finalItemPrice: `${itemFinalPrice} zł`,
+                        netPrice: `${Math.round(itemFinalPrice / 1.23)} zł`,
+                        grossPrice: `${Math.round(itemFinalPrice)} zł`,
+                        productionCost: `${item.productionCost} zł`,
+                        itemProfit: `${itemFinalGrossProfit} zł`,
+                        itemMargin: `${itemFinalMarginPercent}%`,
+                        totalBeforeSpecial: `${totalCartValue} zł`,
+                        specialDiscountTotal: specialDiscount > 0 ? `${specialDiscount}% (-${specialDiscountAmount} zł)` : 'Brak',
+                        finalOfferValue: `${finalOfferValue} zł`,
+                        totalProductionCost: `${totalProductionCost} zł`,
+                        totalProfit: `${finalGrossProfit} zł`,
+                        totalMargin: `${finalMarginPercent}%`,
+                        sold: clientData.sold,
+                        created: timestamp
+                    });
+                });
+                
+                worksheet.getRow(1).font = { bold: true };
+                worksheet.getRow(1).fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FF4472C4' }
+                };
+                worksheet.getRow(1).font.color = { argb: 'FFFFFFFF' };
+                
+                const cleanClientName = clientData.clientName
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9\s]/g, '')
+                    .replace(/\s+/g, '_')
+                    .replace(/[\\/:*?"<>|]/g, '')
+                    .trim();
+                
+                const cleanOfferNumber = clientData.offerNumber
+                    .replace(/[\\/:*?"<>|]/g, '-')
+                    .trim();
+                
+                const fileName = `${cleanClientName}_${cleanOfferNumber}.xlsx`;
+                
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                window.URL.revokeObjectURL(url);
+                
+                const successMessage = `
+✅ OFERTA ZAPISANA POMYŚLNIE!
+
+📄 Plik: ${fileName}
+💾 Lokalizacja: folder Pobrane
+📊 Produktów: ${cart.length}
+💰 Wartość: ${finalOfferValue} zł
+
+🎯 KOSZYK POZOSTAJE AKTYWNY!
+Teraz możesz wygenerować "Ofertę dla klienta" 
+lub dodać więcej produktów.
+
+💡 Kliknij "🗑️ Wyczyść" aby rozpocząć nową ofertę.
+                `;
+                
+                alert(successMessage.trim());
+                
+            } catch (error) {
+                console.error('Błąd podczas zapisywania:', error);
+                alert(`❌ Błąd podczas zapisywania do Excel:\n\n${error.message}`);
+            }
+        }
+        
+        async function saveClientOffer() {
+            alert('📋 Funkcja "Oferta dla klienta" jest dostępna w pełnej wersji.\n\nW wersji demo możesz używać podstawowego "Zapisz ofertę do Excel".');
+        }
+        
+        async function createPDFOrder() {
+            alert('📄 Funkcja "Utwórz zlecenie PDF" jest dostępna w pełnej wersji.\n\nW wersji demo możesz używać podstawowego "Zapisz ofertę do Excel".');
+        }
+        
+        async function loadFromExcel(event) {
+            alert('📂 Funkcja "Wczytaj ofertę z Excel" jest dostępna w pełnej wersji.\n\nW wersji demo możesz tworzyć nowe oferty od podstaw.');
+            event.target.value = '';
+        }
+
+        // Sprawdź czy wszystkie biblioteki się załadowały
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof ExcelJS === 'undefined') {
+                    console.warn('ExcelJS nie załadowało się. Niektóre funkcje mogą być niedostępne.');
+                } else {
+                    console.log('✅ ExcelJS załadowane pomyślnie');
+                }
+            }, 1000);
+        });
+
+    </script>
+</body>
+</html>
